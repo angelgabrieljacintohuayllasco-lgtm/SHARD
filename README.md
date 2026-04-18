@@ -58,7 +58,19 @@ python -m shard build --input my_dictionary.json --output ./mydb --shards 1000
 ### Query a record
 
 ```bash
-python -m shard query --db ./mydb --key "ababol"
+python -m shard query --db ./mydb --key "ababol" --shards 1000
+```
+
+### Similarity search
+
+```bash
+python -m shard search --db ./mydb --query "planta del campo" --top-k 5
+```
+
+### Database statistics
+
+```bash
+python -m shard stats --db ./mydb
 ```
 
 ### In Python
@@ -71,7 +83,7 @@ with MMapReader("./mydb", num_shards=1000) as reader:
     print(result)  # {"lemma": "ababol", "definition": "Planta de la familia..."}
 ```
 
-### Semantic similarity search
+### MinHash similarity search
 
 ```python
 from shard.index.index_reader import IndexReader
@@ -115,7 +127,11 @@ shard/
 │   └── mmap_reader.py     # Memory-mapped reader — O(1) shard + linear scan
 ├── index/
 │   ├── index_builder.py   # Builds MinHash similarity index
-│   └── index_reader.py    # Queries the index for nearest-neighbor search
+│   ├── index_reader.py    # Queries the index for nearest-neighbor search
+│   ├── ivf_builder.py     # Offline IVF index builder for embedding-based search
+│   ├── ivf_reader.py      # Lazy IVF reader — low-RAM embedding search
+│   ├── tfidf_writer.py    # Builds TF-IDF posting lists (keyword search)
+│   └── tfidf_reader.py    # BM25 keyword search over TF-IDF index
 └── cli.py                 # Command-line interface
 
 docs/
